@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/', function(req, res) {
-    res.send('Im a calendar');
+    res.send('Im a calendar ' + req.query.accessToken);
 })
 
 router.get('/:id', function(req, res) {
