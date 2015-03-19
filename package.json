@@ -1,0 +1,15 @@
+{
+  "name": "google-calendar",
+  "version": "0.0.1",
+  "description": "Sunrise backend engineer challenge",
+  "author": "Jake Sendar",
+  "scripts": {
+    "test": "vows --spec --isolate",
+    "start": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.12.3",
+    "nodemon": "^1.3.7"
+  },
+  "devDependencies": {}
+}
