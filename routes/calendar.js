@@ -1,17 +1,23 @@
 var express = require('express')
     , router = express.Router()
-    , CalendarProxy = require('./../lib/calendarProxy')
+    , CalendarProxy = require('./../lib/calendarProxy');
 
-var baseURI = 'https://www.googleapis.com/calendar/v3' 
+var baseURI = 'https://www.googleapis.com/calendar/v3';
 
 router.get('/', function(req, res) {
+    var fields = 'items(id,summary,colorId,selected,timeZone)';
+
     var opts = {
+        fields: fields,
         accessToken: req.query.accessToken,
-        baseURI: 'https://www.googleapis.com/calendar/v3/users/me/calendarList'
+        uri: baseURI + '/users/me/calendarList'
     };
+
     var calendarProxy = new CalendarProxy(opts);
-    calendarProxy.fetchData(function(err, calendarList) {
-        res.json(calendarList);
+
+    calendarProxy.fetchData(function(err, data) {
+        var r = err || data;
+        res.json(r);
     });
 });
 
@@ -19,15 +25,19 @@ router.get('/:id/events', function(req, res) {
     var fields = 'items(status,locked,organizer(displayName,email,self),' + 
         'recurrence,attendees(displayName,email,responseStatus,self),' + 
         'summary,location,start,end,id)';
+
     var opts = {
         fields: fields, 
         accessToken: req.query.accessToken, 
-        baseURI: baseURI + '/calendars/' + req.params.id + '/events'
+        uri: baseURI + '/calendars/' + req.params.id + '/events'
     };
+
     var calendarProxy = new CalendarProxy(opts);
-    calendarProxy.fetchData(function(err, events) {
-        res.json(events)
-    })
+
+    calendarProxy.fetchData(function(err, data) {
+        var r = err || data;
+        res.json(r);
+    });
 });
 
 module.exports = router;
