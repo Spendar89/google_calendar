@@ -1,8 +1,8 @@
-var express = require('express');
-var app = express();
-var session = require('express-session');
-var calendarRouter = require('./routes/calendar');
-var authenticateRouter = require('./routes/authenticate');
+var express = require('express')
+    , app = express()
+    , session = require('express-session')
+    , calendarRouter = require('./routes/calendar')
+    , authenticateRouter = require('./routes/authenticate');
 
 app.use(session({secret: 'keyboard cat'}));
 app.use('/calendars', calendarRouter);

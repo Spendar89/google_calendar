@@ -15,16 +15,12 @@ router.get('/', function(req, res) {
 
     var calendarProxy = new CalendarProxy(opts);
 
-    calendarProxy.fetchData(function(err, data) {
-        var r = err || data;
-        res.json(r);
+    calendarProxy.fetchItems(function(data) {
+        res.json(data);
     });
 });
 
 router.get('/:id/events', function(req, res) {
-    var fields = 'items(status,locked,organizer(displayName,email,self),' + 
-        'recurrence,attendees(displayName,email,responseStatus,self),' + 
-        'summary,location,start,end,id)';
 
     var opts = {
         fields: fields, 
@@ -34,8 +30,7 @@ router.get('/:id/events', function(req, res) {
 
     var calendarProxy = new CalendarProxy(opts);
 
-    calendarProxy.fetchData(function(err, data) {
-        var r = err || data;
+    calendarProxy.fetchItems(function(data) {
         res.json(r);
     });
 });
