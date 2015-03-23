@@ -44,7 +44,7 @@ router.get('/:id/events', function(req, res) {
 
     // Fetches event items returns json response:
     calendarProxy.fetchItems(function(data) {
-        res.json(r);
+        res.json(data);
     });
 });
 
