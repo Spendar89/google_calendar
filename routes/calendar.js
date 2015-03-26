@@ -1,13 +1,13 @@
 var express = require('express')
     , router = express.Router()
-    , CalendarApi = require('./../lib/calendarApi');
+    , CalendarEvents = require('./../lib/calendarApi/calendarEvents')
+    , CalendarList = require('./../lib/calendarApi/calendarList');
 
 
 router.get('/', function(req, res, next) {
-    var accessToken = req.query.accessToken
-        , api = CalendarApi.CalendarList;
+    var accessToken = req.query.accessToken;
 
-    api.get(accessToken, function (err, data){
+    CalendarList.get({access_token: accessToken}, function (err, data){
         err
             ? res.status(err.code).json({error: err})
             : res.json(data);
@@ -16,10 +16,9 @@ router.get('/', function(req, res, next) {
 
 router.get('/:id/events', function(req, res, next) {
     var accessToken = req.query.accessToken
-        , id = req.params.id
-        , api = CalendarApi.CalendarEvents;
+        , id = req.params.id;
 
-    api.get(accessToken, function(err, data){
+    CalendarEvents.get({access_token: accessToken, calendarId: id}, function(err, data){
         err
             ? res.status(err.code).json({error: err})
             : res.json(data);

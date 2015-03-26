@@ -7,7 +7,7 @@ var express = require('express')
 // Redirects to google oauth uri, which then redirects to /callback:
 router.get('/', function(req, res) {
     res.redirect(
-        config.baseUri + 'scope=' + config.scope + '&state=authorized&redirect_uri=' 
+        config.baseAuthUri + 'scope=' + config.scope + '&state=authorized&redirect_uri=' 
         + config.redirectUri + '&response_type=code&client_id=' + config.clientId
     );
 });

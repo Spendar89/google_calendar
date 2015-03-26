@@ -4,12 +4,12 @@ var assert = require("assert"),
     CalendarProxy = require('./../../lib/calendarProxy');
 
 var API = nock('http://foo.com')
-    .get('/?fields=fields&access_token=accessToken');
+    .get('/?foo=bar&access_token=accessToken&fields=fields');
 
 var DEFAULT_OPTS = {
-    fields: "fields",
-    accessToken: "accessToken",
-    uri: "http://foo.com/"
+    uri: "http://foo.com/",
+    fields: ["fields"],
+    params: {foo: "bar", access_token: "accessToken"}
 };
 
 describe('CalendarProxy', function() {
@@ -24,16 +24,11 @@ describe('CalendarProxy', function() {
         });
 
         context('with options', function() {
-            var cp = new CalendarProxy({
-                fields: true,
-                accessToken: true,
-                uri: true
-            });
+            var cp = new CalendarProxy(DEFAULT_OPTS);
 
             it('should have fields, accessToken, and uri properties', function() {
-                cp.should.have.property('fields', true);
-                cp.should.have.property('accessToken', true);
-                cp.should.have.property('uri', true);
+                cp.should.have.property('params', DEFAULT_OPTS.params);
+                cp.should.have.property('uri', DEFAULT_OPTS.uri);
             });
         });
 
@@ -43,14 +38,15 @@ describe('CalendarProxy', function() {
         var cp = new CalendarProxy(DEFAULT_OPTS);
 
         it("should build a uri in the correct format without options", function() {
-            assert("http://foo.com?fields=fields&access_token=accessToken", cp.buildFullUri())
+            assert("http://foo.com?fields=fields&access_token=accessToken", cp.buildFullUri());
         });
 
         it("should build a uri in the correct format with options", function() {
             var opts = {
-                fields: "customFields"
+                fields: ["customFields"],
+                params: {access_token: "accessToken"}
             };
-            assert("http://foo.com?fields=customFields&access_token=accessToken", cp.buildFullUri(opts))
+            assert("http://foo.com?fields=customFields&access_token=accessToken", cp.buildFullUri(opts));
         });
 
     });
@@ -68,13 +64,13 @@ describe('CalendarProxy', function() {
 
         });
 
-        it("should return an error when necessary", function(done) {
-            API.reply(200, {error: true});
+        it("should return a google api error when necessary", function(done) {
+            var googleError = {code: true, message: true, type: "google_api_error"};
+            API.reply(200, {error: {code: true, message: true}});
             cp.fetchData(function(error, data) {
-                error.should.be.true;
+                error.should.eql(googleError);
                 done();
             });
-
         });
     });
 
@@ -104,7 +100,7 @@ describe('CalendarProxy', function() {
 
         it("should return the correct items", function(done) {
             API.reply(200, {"items": [{"foo": "bar"}]});
-            cp.fetchItems(function(data) {
+            cp.fetchItems(true, function(err, data) {
                 data.should.eql([{foo: "bar"}]);
                 done();
             });
@@ -112,7 +108,7 @@ describe('CalendarProxy', function() {
 
         it("should perform the default key transforms", function(done) {
             API.reply(200, {"items": [{"summary": "bar"}]});
-            cp.fetchItems(function(data) {
+            cp.fetchItems(true, function(err, data) {
                 data.should.eql([{title: "bar"}]);
                 done();
             });
@@ -123,15 +119,23 @@ describe('CalendarProxy', function() {
             opts.keysMap = {"oldKey": "newKey"};
             var cp = new CalendarProxy(opts);
             API.reply(200, {"items": [{"oldKey": "bar"}]});
-            cp.fetchItems(function(data) {
+            cp.fetchItems(true, function(err, data) {
                 data.should.eql([{newKey: "bar"}]);
+                done();
+            });
+        });
+
+        it("should perform no key transforms if transform arg is false", function(done) {
+            API.reply(200, {"items": [{"summary": "bar"}]});
+            cp.fetchItems(false, function(err, data) {
+                data.should.eql([{summary: "bar"}]);
                 done();
             });
         });
 
         it("should return an empty array when there are no items", function(done) {
             API.reply(200, {"foo": "bar"});
-            cp.fetchItems(function(data) {
+            cp.fetchItems(true, function(err, data) {
                 data.should.eql([]);
                 done();
             });
