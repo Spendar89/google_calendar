@@ -1,7 +1,7 @@
 var express = require('express')
     , router = express.Router()
-    , CalendarEvents = require('./../lib/calendarApi/calendarEvents')
-    , CalendarList = require('./../lib/calendarApi/calendarList');
+    , CalendarEvents = require('./../api/calendarEvents')
+    , CalendarList = require('./../api/calendarList');
 
 
 router.get('/', function(req, res, next) {
