@@ -3,7 +3,6 @@ var express = require('express')
     , request = require('request')
     , config = require('./../config');
 
-
 // Redirects to google oauth uri, which then redirects to /callback:
 router.get('/', function(req, res) {
     res.redirect(

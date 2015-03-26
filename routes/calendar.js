@@ -1,30 +1,38 @@
-var express = require('express')
-    , router = express.Router()
-    , CalendarEvents = require('./../api/calendarEvents')
-    , CalendarList = require('./../api/calendarList');
-
+var express = require('express'),
+    router = express.Router(),
+    GoogleCalendar = require('./../api/google_calendar');
 
 router.get('/', function(req, res, next) {
     var accessToken = req.query.accessToken;
-    var params = {access_token: accessToken};
-
-    CalendarList.get(params, function(err, data){
-        err
-            ? res.status(err.code).json({error: err})
-            : res.json(data);
-    });
+    req.p = {
+        access_token: accessToken
+    };
+    req.resource = 'calendarList';
+    next();
 });
 
 router.get('/:id/events', function(req, res, next) {
     var accessToken = req.query.accessToken;
     var id = req.params.id;
-    var params= {access_token: accessToken, calendarId: id};
+    req.p = {
+        access_token: accessToken,
+        calendarId: id
+    };
+    req.resource = 'calendarEvents';
+    next();
+});
 
-    CalendarEvents.get(params, function(err, data){
-        err
-            ? res.status(err.code).json({error: err})
-            : res.json(data);
-    });
+router.use(function(req, res) {
+    GoogleCalendar[req.resource]
+        .get(req.p, function(err, data) {
+            if (err)
+                res.status(err.code).json({
+                    error: err
+                });
+            else {
+                res.json(data);
+            }
+        });
 });
 
 module.exports = router;

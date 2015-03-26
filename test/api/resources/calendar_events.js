@@ -1,8 +1,8 @@
 var should = require('should')
     , nock = require('nock')
     , querystring = require('querystring')
-    , util = require('./../../lib/util')
-    , CalendarEvents = require('./../../api/calendarEvents');
+    , util = require('./../../../api/lib/util')
+    , CalendarEvents = require('./../../../api/resources/calendar_events');
 
 describe("CalendarEvents", function() {
     var API = nock(CalendarEvents.getUri('calendarId'))

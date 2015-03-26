@@ -1,6 +1,6 @@
-var ApiRequest = require('./../lib/apiRequest')
-    , ApiTransformer = require('./../lib/apiTransformer')
-    , config = require('./../config');
+var ApiRequest = require('./../lib/api_request')
+    , Transformer = require('./../lib/transformer')
+    , config = require('./../../config');
 
 var CalendarList = {
 
@@ -29,14 +29,14 @@ var CalendarList = {
             uri: this.getUri()
         };
 
-        // initializes ApiRequest and ApiTransformer instances:
+        // initializes ApiRequest and Transformer instances:
         var apiRequest = new ApiRequest(opts);
-        var apiTransformer = new ApiTransformer({}); 
+        var transformer = new Transformer({}); 
 
         // transform function to pass to apiRequest.requestItems:
-        var transform = apiTransformer.transformItemKeys.bind(apiTransformer);
+        var transform = transformer.transformItemKeys.bind(transformer);
 
-        // calls apiRequest.requestItems with apiTransformer.transformItemKeys
+        // calls apiRequest.requestItems with transformer.transformItemKeys
         // and callback function:
         apiRequest.requestItems(transform, callback);
     }

@@ -1,45 +1,45 @@
 var should = require('should')
-    , ApiTransformer = require('./../../lib/apiTransformer');
+    , Transformer = require('./../../../api/lib/transformer');
 
-describe("ApiTransformer", function() {
+describe("Transformer", function() {
 
     describe("#new()", function() {
         context("without opts", function() {
-            var apiTransformer = new ApiTransformer({});
+            var transformer = new Transformer({});
 
             it("should have a keysMap property", function() {
-                apiTransformer.should.have.property("keysMap");
+                transformer.should.have.property("keysMap");
             });
         });
 
         context("with keysMap opt", function() {
-            var apiTransformer = new ApiTransformer({keysMap: true});
+            var transformer = new Transformer({keysMap: true});
 
             it("should have a custom keysMap property", function() {
-                apiTransformer.should.have.property("keysMap", true);
+                transformer.should.have.property("keysMap", true);
             });
         });
 
     });
 
     describe("#transformItemKeys()", function() {
-        var apiTransformer = new ApiTransformer({});
+        var transformer = new Transformer({});
 
         it("should transform an array of items", function() {
             var items = [{"summary": "foo"}]
-            apiTransformer.transformItemKeys(items)
+            transformer.transformItemKeys(items)
             .should.eql([{"title": "foo"}]);
         });
 
         it("should handle nested transforms", function() {
             var items = [{"attendees": {"displayName": "foo"}}];
-            apiTransformer.transformItemKeys(items)
+            transformer.transformItemKeys(items)
             .should.eql([{"attendees": {"name": "foo"}}]);
         });
 
         it("should do nothing to unspecified keys", function() {
             var items = [{"foo": "bar"}];
-            apiTransformer.transformItemKeys(items)
+            transformer.transformItemKeys(items)
             .should.eql([{"foo": "bar"}]);
         });
     });

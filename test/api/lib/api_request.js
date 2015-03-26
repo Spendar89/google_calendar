@@ -1,7 +1,7 @@
-var assert = require("assert"),
-    should = require('should'),
-    nock = require('nock'),
-    ApiRequest = require('./../../lib/apiRequest');
+var assert = require("assert")
+    , should = require('should')
+    , nock = require('nock')
+    , ApiRequest = require('./../../../api/lib/api_request');
 
 var API = nock('http://foo.com')
     .get('/?foo=bar&access_token=accessToken&fields=fields');
