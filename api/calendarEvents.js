@@ -1,6 +1,6 @@
-var ApiRequest = require('./../lib/apiRequest');
-var ApiTransformer = require('./../lib/apiTransformer');
-var config = require('./../config');
+var ApiRequest = require('./../lib/apiRequest')
+    , ApiTransformer = require('./../lib/apiTransformer')
+    , config = require('./../config');
 
 var CalendarEvents = {
 

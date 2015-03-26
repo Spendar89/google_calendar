@@ -6,8 +6,9 @@ var express = require('express')
 
 router.get('/', function(req, res, next) {
     var accessToken = req.query.accessToken;
+    var params = {access_token: accessToken};
 
-    CalendarList.get({access_token: accessToken}, function (err, data){
+    CalendarList.get(params, function(err, data){
         err
             ? res.status(err.code).json({error: err})
             : res.json(data);
@@ -15,10 +16,11 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/:id/events', function(req, res, next) {
-    var accessToken = req.query.accessToken
-        , id = req.params.id;
+    var accessToken = req.query.accessToken;
+    var id = req.params.id;
+    var params= {access_token: accessToken, calendarId: id};
 
-    CalendarEvents.get({access_token: accessToken, calendarId: id}, function(err, data){
+    CalendarEvents.get(params, function(err, data){
         err
             ? res.status(err.code).json({error: err})
             : res.json(data);
