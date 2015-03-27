@@ -3,35 +3,13 @@ var should = require('should'),
 
 describe("Transformer", function() {
 
-    describe("#new()", function() {
-        context("without opts", function() {
-            var transformer = new Transformer({});
-
-            it("should have a keysMap property", function() {
-                transformer.should.have.property("keysMap");
-            });
-        });
-
-        context("with keysMap opt", function() {
-            var transformer = new Transformer({
-                keysMap: true
-            });
-
-            it("should have a custom keysMap property", function() {
-                transformer.should.have.property("keysMap", true);
-            });
-        });
-
-    });
-
     describe("#transformItemKeys()", function() {
-        var transformer = new Transformer({});
 
         it("should transform an array of items", function() {
             var items = [{
                 "summary": "foo"
             }]
-            transformer
+            Transformer
                 .transformItemKeys(items)
                 .should.eql([{
                     "title": "foo"
@@ -44,7 +22,7 @@ describe("Transformer", function() {
                     "displayName": "foo"
                 }
             }];
-            transformer
+            Transformer
                 .transformItemKeys(items)
                 .should.eql([{
                     "attendees": {
@@ -57,7 +35,7 @@ describe("Transformer", function() {
             var items = [{
                 "foo": "bar"
             }];
-            transformer
+            Transformer
                 .transformItemKeys(items)
                 .should.eql([{
                     "foo": "bar"

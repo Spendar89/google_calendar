@@ -1,34 +1,45 @@
 var should = require('should'),
-    nock = require('nock'),
-    querystring = require('querystring'),
-    util = require('./../../../api/lib/util'),
+    Transformer = require('./../../../api/lib/transformer'),
+    Resource = require('./../../../api/resources/resource'),
     CalendarList = require('./../../../api/resources/calendar_list');
 
 describe("CalendarList", function() {
-    var API = nock(CalendarList.getUri());
-    var fieldsString = util.stringifyFields(CalendarList.fields);
-    var qs = querystring.stringify({
-        access_token: 'accessToken',
-        fields: fieldsString
-    });
+    describe("#new()", function() {
+        context("no options", function() {
+            var calendarList = new CalendarList({
+                "foo": "bar"
+            });
 
-    API.get("?" + qs).reply(200, {
-        "items": [{
-            "foo": "bar"
-        }]
-    });
+            it("should have default path, fields, and transform  properties", function() {
+                calendarList.should.have.property("path", "/users/me/calendarList");
+                calendarList.should.have.property("fields", CalendarList.fields);
+                calendarList.should.have.property("transform", CalendarList.transform);
+            });
 
-    describe("#get()", function() {
-        it("should fetch the correct calendarList data", function(done) {
-            var params = {
-                access_token: 'accessToken'
+            it("should set the params property to params arg", function() {
+                calendarList.should.have.property("params", {
+                    "foo": "bar"
+                });
+            });
+
+            it("should inherit from Resource", function() {
+                calendarList.__proto__.should.eql(Resource);
+            });
+        });
+
+        context("with options", function() {
+            var opts = {
+                fields: true,
+                transform: true
             };
 
-            CalendarList.get(params, function(err, data) {
-                data.should.eql([{
-                    "foo": "bar"
-                }]);
-                done();
+            var calendarList = new CalendarList({
+                "foo": "bar",
+            }, opts);
+
+            it("should have custom fields and transform  properties", function() {
+                calendarList.should.have.property("fields", opts.fields);
+                calendarList.should.have.property("transform", opts.transform);
             });
         });
     });

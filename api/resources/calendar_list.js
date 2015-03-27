@@ -1,9 +1,28 @@
-var Resource = require('./../lib/resource'),
-    Transformer = require('./../lib/transformer'),
-    transformer = new Transformer({});
+var Resource = require('./resource'),
+    Transformer = require('./../lib/transformer');
 
-function CalendarList(params) {
-    this.fields = [{
+var CalendarList = function(params, opts) {
+    var opts = opts || {}
+
+    // this.fields is assigned to custom or default value:
+    this.fields = opts.fields || CalendarList.fields;
+
+    // Assigns a transform function that is called whenever 
+    // CalendarList items are retrieved.
+    // Turn off by setting to false:
+    this.transform = opts.transform || CalendarList.transform; 
+
+    this.params = params;
+    this.path = '/users/me/calendarList';
+};
+
+CalendarList.prototype = Resource;
+
+// Default transform function:
+CalendarList.transform = Transformer.transformItemKeys;
+
+// Default CalendarEvents fields:
+CalendarList.fields = [{
         'items': [
             'id',
             'summary',
@@ -12,18 +31,5 @@ function CalendarList(params) {
             'timeZone'
         ]
     }];
-
-    // Assigns a transform function that is called whenever 
-    // CalendarList items are retrieved.
-    // Turn off by setting this.transform to false:
-    this.transform = transformer
-        .transformItemKeys
-        .bind(transformer);
-
-    this.params = params;
-    this.path = '/users/me/calendarList';
-};
-
-CalendarList.prototype = Resource;
 
 module.exports = CalendarList;

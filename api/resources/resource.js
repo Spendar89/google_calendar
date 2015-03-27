@@ -1,4 +1,4 @@
-var ApiRequest = require('./api_request');
+var ApiRequest = require('./../lib/api_request');
 
 var Resource = {
     baseUrl: 'https://www.googleapis.com/calendar/v3',
@@ -12,12 +12,10 @@ var Resource = {
             uri: this.baseUrl + this.path
         };
 
-        // initializes ApiRequest and Transformer instances:
+        // initializes ApiRequest with opt:
         var apiRequest = new ApiRequest(opts);
 
-
-        // calls apiRequest.requestItems with transformer.transformItemKeys
-        // and callback function:
+        // calls apiRequest.requestItems with transform and callback:
         apiRequest.requestItems(this.transform, callback);
     }
 };

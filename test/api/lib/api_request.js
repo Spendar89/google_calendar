@@ -3,6 +3,8 @@ var assert = require("assert"),
     nock = require('nock'),
     ApiRequest = require('./../../../api/lib/api_request');
 
+nock.enableNetConnect();
+
 var API = nock('http://foo.com')
     .get('/?foo=bar&access_token=accessToken&fields=fields');
 
@@ -107,11 +109,11 @@ describe('ApiRequest', function() {
             });
         });
 
-        it("should return a generic error when necessary", function(done) {
+        it("should return a client error when necessary", function(done) {
             var genericError = {
                 code: 403,
                 message: true,
-                type: "generic_error"
+                type: "client_error"
             };
 
             API.reply(403, true)

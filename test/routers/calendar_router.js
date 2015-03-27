@@ -1,12 +1,24 @@
 var request = require('supertest'),
-    rewire = require('rewire'),
     should = require('should'),
+    rewire = require('rewire'),
     app = require('./../../app'),
     CalendarRouter = rewire('./../../routers/calendar_router');
 
+CalendarListMock = function(params) {
+    this.params = params;
+};
+
+CalendarEventsMock = function(params) {
+    this.params = params;
+};
+
+var ResourceMock = {};
+
+CalendarListMock.prototype = CalendarEventsMock.prototype = ResourceMock;
+
 var GoogleCalendarMock = {
-    calendarList: {},
-    calendarEvents: {}
+    calendarList: CalendarListMock,
+    calendarEvents: CalendarEventsMock
 };
 
 var errorMock = {
@@ -29,8 +41,8 @@ describe('CalendarRouter', function() {
     describe('GET /', function() {
         context("Remote api call in CalendarList.get is successful", function() {
             before(function() {
-                GoogleCalendarMock.calendarList.get = function(params, callback) {
-                    callback(undefined, params);
+                ResourceMock.get = function(callback) {
+                    callback(undefined, this.params);
                 };
             });
 
@@ -59,7 +71,7 @@ describe('CalendarRouter', function() {
 
         context("CalendarList.get results in error", function() {
             before(function() {
-                GoogleCalendarMock.calendarList.get = function(params, callback) {
+                ResourceMock.get = function(callback) {
                     callback(errorMock);
                 };
             });
@@ -94,8 +106,8 @@ describe('CalendarRouter', function() {
     describe('GET /:id/events', function() {
         context("Remote api call in CalendarEvents.get is successful", function() {
             before(function() {
-                GoogleCalendarMock.calendarEvents.get = function(params, callback) {
-                    callback(undefined, params);
+                ResourceMock.get = function(callback) {
+                    callback(undefined, this.params);
                 };
             });
 
@@ -125,7 +137,7 @@ describe('CalendarRouter', function() {
 
         context("CalendarEvents.get results in error", function() {
             before(function() {
-                GoogleCalendarMock.calendarEvents.get = function(params, callback) {
+                ResourceMock.get = function(callback) {
                     callback(errorMock);
                 };
             });

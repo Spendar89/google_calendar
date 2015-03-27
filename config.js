@@ -1,6 +1,5 @@
 // Google Calendar API an OAuth config 
 var Config = {
-    baseApiUri: 'https://www.googleapis.com/calendar/v3',
     baseAuthUri:'https://accounts.google.com/o/oauth2/auth?',
     tokenUri: 'https://accounts.google.com/o/oauth2/token',
     scope: 'https://www.googleapis.com/auth/calendar',

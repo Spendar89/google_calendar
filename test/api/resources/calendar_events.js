@@ -1,36 +1,52 @@
 var should = require('should'),
-    nock = require('nock'),
-    querystring = require('querystring'),
-    util = require('./../../../api/lib/util'),
+    Transformer = require('./../../../api/lib/transformer'),
+    Resource = require('./../../../api/resources/resource'),
     CalendarEvents = require('./../../../api/resources/calendar_events');
 
 describe("CalendarEvents", function() {
-    var API = nock(CalendarEvents.getUri('calendarId'))
-    var fieldsString = util.stringifyFields(CalendarEvents.fields);
-    var qs = querystring.stringify({
-        access_token: 'accessToken',
-        fields: fieldsString
-    });
+    describe("#new()", function() {
+        context("no options", function() {
+            var calendarEvents = new CalendarEvents({
+                "foo": "bar",
+                "calendarId": "baz"
+            });
 
-    API.get("?" + qs)
-        .reply(200, {
-            "items": [{
-                "foo": "bar"
-            }]
+            var path = "/calendars/baz/events";
+
+            it("should have default fields and transform  properties", function() {
+                calendarEvents.should.have.property("fields", CalendarEvents.fields);
+                calendarEvents.should.have.property("transform", CalendarEvents.transform);
+            });
+
+            it("should set the path property from params.calendarId", function() {
+                calendarEvents.should.have.property("path", path);
+            })
+
+            it("should set the params property to params arg minus calendarId", function() {
+                calendarEvents.should.have.property("params", {
+                    "foo": "bar"
+                });
+            });
+
+            it("should inherit from Resource", function() {
+                calendarEvents.__proto__.should.eql(Resource);
+            });
         });
 
-    describe("#get()", function() {
-        it("should fetch the correct proxy data", function(done) {
-            var params = {
-                access_token: 'accessToken',
-                calendarId: 'calendarId'
+        context("with options", function() {
+            var opts = {
+                fields: true,
+                transform: true
             };
 
-            CalendarEvents.get(params, function(err, data) {
-                data.should.eql([{
-                    "foo": "bar"
-                }]);
-                done();
+            var calendarEvents = new CalendarEvents({
+                "foo": "bar",
+                "calendarId": "baz"
+            }, opts);
+
+            it("should have custom fields and transform  properties", function() {
+                calendarEvents.should.have.property("fields", opts.fields);
+                calendarEvents.should.have.property("transform", opts.transform);
             });
         });
     });

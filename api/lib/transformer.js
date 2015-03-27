@@ -1,27 +1,22 @@
 var util = require('./util');
 
-var DEFAULT_KEYSMAP = {
-    "summary": "title",
-    "timeZone": "timezone",
-    "colorId": "color",
-    "organizer": {
-        "displayName": "name"
-    },
-    "attendees": {
-        "displayName": "name",
-        "responseStatus": "rsvpStatus"
-    },
-    "locked": "editable"
-};
-
-function ApiTransformer(opts) {
-    this.keysMap = opts.keysMap || DEFAULT_KEYSMAP;
-};
-
-ApiTransformer.prototype = {
-    transformItemKeys: function(items) {
+var ApiTransformer = {
+    transformItemKeys: function(items, keysMap) {
+        var keysMap = keysMap || {
+            "summary": "title",
+            "timeZone": "timezone",
+            "colorId": "color",
+            "organizer": {
+                "displayName": "name"
+            },
+            "attendees": {
+                "displayName": "name",
+                "responseStatus": "rsvpStatus"
+            },
+            "locked": "editable"
+        };
         return items.map(function(i) {
-            return util.transformKeys(this.keysMap, i);
+            return util.transformKeys(keysMap, i);
         }.bind(this));
     }
 };
