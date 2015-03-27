@@ -1,45 +1,29 @@
-var ApiRequest = require('./../lib/api_request')
-    , Transformer = require('./../lib/transformer')
-    , config = require('./../../config');
+var Resource = require('./../lib/resource'),
+    Transformer = require('./../lib/transformer'),
+    transformer = new Transformer({});
 
-var CalendarList = {
-
-    // specifies the calendarList fields that will be fetched via the api:
-    fields: [{
+function CalendarList(params) {
+    this.fields = [{
         'items': [
-            'id', 
-            'summary', 
-            'colorId', 
-            'selected', 
+            'id',
+            'summary',
+            'colorId',
+            'selected',
             'timeZone'
         ]
-    }],
+    }];
 
-    getUri: function() {
-        return config.baseApiUri + '/users/me/calendarList';
-    },
+    // Assigns a transform function that is called whenever 
+    // CalendarList items are retrieved.
+    // Turn off by setting this.transform to false:
+    this.transform = transformer
+        .transformItemKeys
+        .bind(transformer);
 
-    get: function(params, callback) {
-        var uri = this.getUri(); 
-
-        // opts object used to initialize apiRequest instance::w
-        var opts = {
-            fields: this.fields,
-            params: params,
-            uri: this.getUri()
-        };
-
-        // initializes ApiRequest and Transformer instances:
-        var apiRequest = new ApiRequest(opts);
-        var transformer = new Transformer({}); 
-
-        // transform function to pass to apiRequest.requestItems:
-        var transform = transformer.transformItemKeys.bind(transformer);
-
-        // calls apiRequest.requestItems with transformer.transformItemKeys
-        // and callback function:
-        apiRequest.requestItems(transform, callback);
-    }
+    this.params = params;
+    this.path = '/users/me/calendarList';
 };
+
+CalendarList.prototype = Resource;
 
 module.exports = CalendarList;

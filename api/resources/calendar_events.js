@@ -1,68 +1,47 @@
-var ApiRequest = require('./../lib/api_request')
-    , Transformer = require('./../lib/transformer')
-    , config = require('./../../config');
+var Resource = require('./../lib/resource'),
+    Transformer = require('./../lib/transformer'),
+    transformer = new Transformer({});
 
-var CalendarEvents = {
-
-    // specifies the calendarEvents fields that will be fetched via the api:
-    fields: [{
+function CalendarEvents(params) {
+    this.fields = [{
         'items': [
-            'status', 
-            'locked', 
-            {
+            'status',
+            'locked', {
                 'organizer': [
-                    'displayName', 
-                    'email', 
-                    'self'
-                ]
-            }, 
-            'recurrence', 
-            {
-                'attendees': [
-                    'displayName', 
-                    'email', 
-                    'responseStatus', 
+                    'displayName',
+                    'email',
                     'self'
                 ]
             },
-            'summary', 
-            'location', 
-            'start', 
-            'end', 
+            'recurrence', {
+                'attendees': [
+                    'displayName',
+                    'email',
+                    'responseStatus',
+                    'self'
+                ]
+            },
+            'summary',
+            'location',
+            'start',
+            'end',
             'id'
         ]
-    }],
+    }];
 
-    getUri: function(calendarId) {
-        return config.baseApiUri + '/calendars/' + calendarId + '/events'
-    },  
+    // Assigns a transform function that is called whenever 
+    // CalendarEvent items are retrieved.
+    // Turn off by setting this.transform to false:
+    this.transform = transformer
+        .transformItemKeys
+        .bind(transformer);
 
-    get: function(params, callback) {
+    this.params = params;
+    this.path = '/calendars/' + params.calendarId + '/events';
 
-        // generates uri from calendarId param
-        var uri = this.getUri(params.calendarId); 
-
-        // deletes calendarId from params since its already included the uri
-        delete params.calendarId;
-
-        // opts object used to initialize apiRequest instance::w
-        var opts = {
-            fields: this.fields, 
-            params: params,
-            uri: uri
-        };
-
-        // initializes ApiRequest and Transformer instances:
-        var apiRequest = new ApiRequest(opts);
-        var transformer = new Transformer({});
-
-        // transform function to pass to apiRequest.requestItems:
-        var transform = transformer.transformItemKeys.bind(transformer);
-
-        // calls apiRequest.requestItems with transformer.transformItemKeys
-        // and callback function:
-        apiRequest.requestItems(transform, callback);
-    } 
+    delete this.params.calendarId;
 };
+
+CalendarEvents.prototype = Resource;
 
 module.exports = CalendarEvents;

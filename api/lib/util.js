@@ -1,10 +1,9 @@
 var Util = {
-
     stringifyFields: function(fields) {
         var str = '';
-        fields.forEach(function (field, i) {
+        fields.forEach(function(field, i) {
             if (typeof field == 'object') {
-                for(var key in field) {
+                for (var key in field) {
                     var subStr = '(' + this.stringifyFields(field[key]) + ')';
                     str += (key + subStr);
                 }
@@ -19,9 +18,9 @@ var Util = {
         return str;
     },
 
-    transformKeys: function (keysMap, obj) {
+    transformKeys: function(keysMap, obj) {
         var result = {};
-        for(var key in obj) {
+        for (var key in obj) {
             if (obj.hasOwnProperty(key) && keysMap.hasOwnProperty(key)) {
                 var newKey = keysMap[key];
                 if (typeof(newKey) == "object") {

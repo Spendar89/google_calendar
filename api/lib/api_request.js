@@ -1,6 +1,6 @@
-var request = require('request')
-    , querystring = require('querystring')
-    , util = require('./util');
+var request = require('request'),
+    querystring = require('querystring'),
+    util = require('./util');
 
 function ApiRequest(opts) {
     this.uri = opts.uri;
@@ -12,18 +12,18 @@ ApiRequest.prototype = {
 
     // Builds full uri by appending querystring to uri.
     // Accepts opts object for custom uris:
-    buildFullUri: function (opts) {
-        var opts = opts || {}
-            , uri = opts.uri || this.uri
-            , params = opts.params || this.params
-            , fields = opts.fields || this.fields;
+    buildFullUri: function(opts) {
+        var opts = opts || {},
+            uri = opts.uri || this.uri,
+            params = opts.params || this.params,
+            fields = opts.fields || this.fields;
 
         // Converts fields object to valid string format and adds it to params:
         if (fields) {
             params.fields = util.stringifyFields(fields);
         };
 
-        var qs =  querystring.stringify(params);
+        var qs = querystring.stringify(params);
 
         return uri + '?' + qs;
     },
@@ -38,13 +38,16 @@ ApiRequest.prototype = {
                 items = transformer(items);
             };
             callback(err, items);
-        })
+        });
     },
 
     // Requests data from remote and handles errors:
     requestData: function(callback) {
         var uri = this.buildFullUri();
-        request.get({url: uri, json: true}, function(err, res, body) { 
+        request.get({
+            url: uri,
+            json: true
+        }, function(err, res, body) {
             var error;
 
             if (err) {
@@ -67,7 +70,7 @@ ApiRequest.prototype = {
 
             if (res.statusCode != 200) {
                 error = {
-                    type: "generic_error",
+                    type: "client_error",
                     code: res.statusCode,
                     message: res.body
                 };
@@ -75,7 +78,7 @@ ApiRequest.prototype = {
             };
 
             callback(error, body);
-        })
+        });
     }
 };
 
