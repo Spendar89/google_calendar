@@ -159,7 +159,7 @@ As its name would suggest, `apiRequest.requestItems` is used to request resource
 
 Now lets take a look at `Transformers`.
 
-##### Transformer
+##### Transformers
 
 The `Transformer` object serves as a namespace for transform functions:
 
@@ -185,5 +185,5 @@ var Transformer = {
     }
 };
 ```
-
-Currently, there is only a single transform, `transformItemKeys`.  In theory, however, more could be added (and set as `Resource.transform`'s).  `transformItemKeys` is the default transform of both `CalendarEvents` and `CalendarList` resources.
+A valid transform function takes data as an input and returns a transformed version of the data.
+Currently, there is only a single transform function, `transformItemKeys`.  It is the default transform of both `CalendarEvents` and `CalendarList` resources.
