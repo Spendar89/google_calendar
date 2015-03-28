@@ -3,6 +3,7 @@
 A Node.js client for Google's Calendar API.
 
 ## Overview
+*Note: The following is an overview of the API-client-portion of the application.  It does not cover routing or authentication.*
 
 ##### Resources
 
@@ -185,5 +186,4 @@ var Transformer = {
     }
 };
 ```
-A valid transform function takes data as an input and returns a transformed version of the data.
-Currently, there is only a single transform function, `transformItemKeys`.  It is the default transform of both `CalendarEvents` and `CalendarList` resources.
+A valid transform function takes data as an input and returns a transformed version of the data. If a `resource` has a `transform` attribute, it will be invoked whenever `resource.get` is called to fetch data.
