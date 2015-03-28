@@ -5,7 +5,7 @@ var Resource = {
 
     get: function(callback) {
 
-        // opts object used to initialize apiRequest instance::w
+        // opts object used to initialize apiRequest instance:
         var opts = {
             fields: this.fields,
             params: this.params,
