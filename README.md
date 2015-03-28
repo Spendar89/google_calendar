@@ -6,7 +6,7 @@ A Node.js client for Google's Calendar API.
 
 ##### Resources
 
-API resources are accessed via the the GoogleCalendar namespace:
+API resources are accessed via the GoogleCalendar namespace:
 
 ```js
 var GoogleCalendar = require('./api/google_calendar');
@@ -140,4 +140,36 @@ The two resources `CalendarList` and `CalendarEvents` don't interface directly w
     }
 ```
 
-The first thing to note is that `requestItems` receives a `transform` argument, which can either be a function (such as `resource#transform`), or `false` (to disable). After calling `apiRequest.requestData`, it passes `data.items` to the transform function (unless its `false`) and finally passes the transformed items to the callback.
+The first thing to note is that `requestItems` receives a `transform` argument, which can either be a function (such as `resource#transform`), or `false` (to disable). After calling `apiRequest.requestData`, `apiRequest.requestItems` passes `data.items` to the transform function (unless its `false`) and finally passes the transformed items to its callback.
+
+Now lets take a look at `Transformers`.
+
+##### Transformer
+
+The `Transformer` object serves as a namespace for transform functions:
+
+```js
+var Transformer = {
+
+    transformItemKeys: function(items, keysMap) {
+        var keysMap = keysMap || {
+            "summary": "title",
+            "timeZone": "timezone",
+            "colorId": "color",
+            "organizer": {
+                "displayName": "name"
+            },
+            "attendees": {
+                "displayName": "name",
+                "responseStatus": "rsvpStatus"
+            },
+            "locked": "editable"
+        };
+        return items.map(function(i) {
+            return util.transformKeys(keysMap, i);
+        }.bind(this));
+    }
+};
+```
+
+Currently, there is only a single transform, `transformItemKeys`, but theoretically, more could be added (and assigned to different `resource` instances).  `transformItemKeys` is the default transform of both `CalendarEvents` and `CalendarList` resources.  It uses a `keysMap` object to change the keyNames of fetched item data.

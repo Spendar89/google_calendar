@@ -1,6 +1,8 @@
 var util = require('./util');
 
-var ApiTransformer = {
+var Transformer = {
+
+    //Maps items by passing each to util.transformKeys with keysMap:
     transformItemKeys: function(items, keysMap) {
         var keysMap = keysMap || {
             "summary": "title",
@@ -21,4 +23,4 @@ var ApiTransformer = {
     }
 };
 
-module.exports = ApiTransformer;
+module.exports = Transformer;
