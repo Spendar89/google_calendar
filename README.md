@@ -25,10 +25,26 @@ var CalendarList = function(params, opts) {
 ```
 
 The `params` argument is a basic javascript object. It will be used later on to build the full resource URL. In order for API calls to be
-successful, `params` must include an `accessToken` key and value.
+successful, `params` must include an `access_token` key and value.
 
 A Resource also accepts an `opts` argument that is used to set its `fields` and 
-`transform` attributes. In the event that `opts` is not provided, a resource will fallback to `{RESOURCE_NAME}.transform` and `{RESOURCE_NAME}.fields`.
+`transform` attributes. In the event that `opts` is not provided, a resource will fallback to `{RESOURCE_NAME}.transform` and `{RESOURCE_NAME}.fields`:
+
+```js
+// Default transform function:
+CalendarList.transform = Transformer.transformItemKeys;
+
+// Default CalendarEvents fields:
+CalendarList.fields = [{
+        'items': [
+            'id',
+            'summary',
+            'colorId',
+            'selected',
+            'timeZone'
+        ]
+    }];
+```
 
 Lets create a `CalendarList` instance:
 
@@ -36,7 +52,7 @@ Lets create a `CalendarList` instance:
 var calendarList = new GoogleCalendar.calendarList({access_token: OAUTH_ACCESS_TOKEN})
 ```
 
-A resource instance can make an API request by calling its `get` method:
+A resource instance makes an API request by calling `get`:
 
 ```js
 calendarList.get(function(err, data) {
@@ -44,7 +60,7 @@ calendarList.get(function(err, data) {
 });
 ```
 
-Here's what's happening under the hood:
+Here's what happens under the hood:
 
 ```js
 
@@ -64,11 +80,10 @@ get: function(callback) {
         apiRequest.requestItems(this.transform, callback);
 }
 ```
-The request is handled by an instance of `ApiRequest`, which takes us to the next section...
 
 ##### ApiRequest:
 
-`ApiRequest` is a resource-agnostic service object used to request data from provided remotes:
+A request is performed by an instance of `ApiRequest`, a resource-agnostic service object, used to request data from provided remotes:
 
 ```js
 function ApiRequest(opts) {
@@ -78,7 +93,7 @@ function ApiRequest(opts) {
 };
 ```
 
-Data can be requested by calling `requestData`:
+Data can be requested by calling `apiRequest.requestData`:
 
 ```js
 
@@ -123,9 +138,9 @@ Data can be requested by calling `requestData`:
     }
 };
 ```
-`requestData` makes a request to the url returned in `apiRequest.buildFullUri()`, creates error objects for multiple types of errors, and passes the error and/or response data to a callback function.
+`apiRequest.requestData` makes a request to the url returned by `apiRequest.buildFullUri()`, creates an error object if necessary, and passes the error and/or response data to a callback.
 
-The two resources `CalendarList` and `CalendarEvents` don't interface directly with `requestData`, however.  Rather, they call `apiRequest.requestItems`:
+The two resources `CalendarList` and `CalendarEvents` don't interface directly with `apiRequest.requestData`, however.  Rather, they call a wrapper function, `apiRequest.requestItems`:
 
 ```js
     requestItems: function(transform, callback) {
@@ -140,7 +155,7 @@ The two resources `CalendarList` and `CalendarEvents` don't interface directly w
     }
 ```
 
-The first thing to note is that `requestItems` receives a `transform` argument, which can either be a function (such as `resource#transform`), or `false` (to disable). After calling `apiRequest.requestData`, `apiRequest.requestItems` passes `data.items` to the transform function (unless its `false`) and finally passes the transformed items to its callback.
+As its name would suggest, `apiRequest.requestItems` is used to request resource item data.  The first thing to note is that `apiRequest.requestItems` receives a `transform` argument, which can either be a function (e.g `resource.transform`), or `false` (to disable). After calling `apiRequest.requestData`, `apiRequest.requestItems` passes `data.items` to the transform function (unless its `false`) before passing the transformed items to the callback.
 
 Now lets take a look at `Transformers`.
 
@@ -150,7 +165,6 @@ The `Transformer` object serves as a namespace for transform functions:
 
 ```js
 var Transformer = {
-
     transformItemKeys: function(items, keysMap) {
         var keysMap = keysMap || {
             "summary": "title",
@@ -172,4 +186,4 @@ var Transformer = {
 };
 ```
 
-Currently, there is only a single transform, `transformItemKeys`, but theoretically, more could be added (and assigned to different `resource` instances).  `transformItemKeys` is the default transform of both `CalendarEvents` and `CalendarList` resources.  It uses a `keysMap` object to change the keyNames of fetched item data.
+Currently, there is only a single transform, `transformItemKeys`.  In theory, however, more could be added (and set as `Resource.transform`'s).  `transformItemKeys` is the default transform of both `CalendarEvents` and `CalendarList` resources.
