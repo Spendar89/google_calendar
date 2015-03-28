@@ -30,12 +30,12 @@ ApiRequest.prototype = {
 
     // Requests items from remote, transforms them if transformer function is
     // specified, and passes them to callback:
-    requestItems: function(transformer, callback) {
+    requestItems: function(transform, callback) {
         this.requestData(function(err, data) {
             if (err) return callback(err);
             var items = data.items || [];
-            if (transformer) {
-                items = transformer(items);
+            if (transform) {
+                items = transform(items);
             };
             callback(err, items);
         });

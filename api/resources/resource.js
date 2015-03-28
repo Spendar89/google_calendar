@@ -12,7 +12,7 @@ var Resource = {
             uri: this.baseUrl + this.path
         };
 
-        // initializes ApiRequest with opt:
+        // initializes ApiRequest with opts:
         var apiRequest = new ApiRequest(opts);
 
         // calls apiRequest.requestItems with transform and callback:
